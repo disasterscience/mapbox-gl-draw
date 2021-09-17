@@ -6,7 +6,7 @@ import isTap from './lib/is_tap';
 import * as Constants from './constants';
 import objectToMode from './modes/object_to_mode';
 
-export default function(ctx) {
+export default function (ctx) {
 
   const modes = Object.keys(ctx.options.modes).reduce((m, k) => {
     m[k] = objectToMode(ctx.options.modes[k]);
@@ -19,7 +19,7 @@ export default function(ctx) {
   let currentModeName = null;
   let currentMode = null;
 
-  events.drag = function(event, isDrag) {
+  events.drag = function (event, isDrag) {
     if (isDrag({
       point: event.point,
       time: new Date().getTime()
@@ -31,15 +31,15 @@ export default function(ctx) {
     }
   };
 
-  events.mousedrag = function(event) {
+  events.mousedrag = function (event) {
     events.drag(event, endInfo => !isClick(mouseDownInfo, endInfo));
   };
 
-  events.touchdrag = function(event) {
+  events.touchdrag = function (event) {
     events.drag(event, endInfo => !isTap(touchStartInfo, endInfo));
   };
 
-  events.mousemove = function(event) {
+  events.mousemove = function (event) {
     const button = event.originalEvent.buttons !== undefined ? event.originalEvent.buttons : event.originalEvent.which;
     if (button === 1) {
       return events.mousedrag(event);
@@ -49,7 +49,7 @@ export default function(ctx) {
     currentMode.mousemove(event);
   };
 
-  events.mousedown = function(event) {
+  events.mousedown = function (event) {
     mouseDownInfo = {
       time: new Date().getTime(),
       point: event.point
@@ -59,7 +59,7 @@ export default function(ctx) {
     currentMode.mousedown(event);
   };
 
-  events.mouseup = function(event) {
+  events.mouseup = function (event) {
     const target = getFeaturesAndSetCursor(event, ctx);
     event.featureTarget = target;
 
@@ -73,11 +73,11 @@ export default function(ctx) {
     }
   };
 
-  events.mouseout = function(event) {
+  events.mouseout = function (event) {
     currentMode.mouseout(event);
   };
 
-  events.touchstart = function(event) {
+  events.touchstart = function (event) {
     // Prevent emulated mouse events because we will fully handle the touch here.
     // This does not stop the touch events from propogating to mapbox though.
     event.originalEvent.preventDefault();
@@ -90,11 +90,19 @@ export default function(ctx) {
       point: event.point
     };
     const target = featuresAt.touch(event, null, ctx)[0];
+
+    // @tristan-morris - fix for handling touch - per https://github.com/mapbox/mapbox-gl-draw/pull/869/files
+    if (!target && currentModeName === 'simple_select') {
+      return;
+    }
+    event.originalEvent.preventDefault();
+    // end
+
     event.featureTarget = target;
     currentMode.touchstart(event);
   };
 
-  events.touchmove = function(event) {
+  events.touchmove = function (event) {
     event.originalEvent.preventDefault();
     if (!ctx.options.touchEnabled) {
       return;
@@ -104,13 +112,21 @@ export default function(ctx) {
     return events.touchdrag(event);
   };
 
-  events.touchend = function(event) {
+  events.touchend = function (event) {
     event.originalEvent.preventDefault();
     if (!ctx.options.touchEnabled) {
       return;
     }
 
     const target = featuresAt.touch(event, null, ctx)[0];
+
+    // @tristan-morris - fix for handling touch
+    if (!target && currentModeName === 'simple_select') {
+      return;
+    }
+    event.originalEvent.preventDefault();
+    // end
+
     event.featureTarget = target;
     if (isTap(touchStartInfo, {
       time: new Date().getTime(),
@@ -126,7 +142,7 @@ export default function(ctx) {
   // 46 - Delete
   const isKeyModeValid = code => !(code === 8 || code === 46 || (code >= 48 && code <= 57));
 
-  events.keydown = function(event) {
+  events.keydown = function (event) {
     if ((event.srcElement || event.target).classList[0] !== 'mapboxgl-canvas') return; // we only handle events on the map
 
     if ((event.keyCode === 8 || event.keyCode === 46) && ctx.options.controls.trash) {
@@ -143,17 +159,17 @@ export default function(ctx) {
     }
   };
 
-  events.keyup = function(event) {
+  events.keyup = function (event) {
     if (isKeyModeValid(event.keyCode)) {
       currentMode.keyup(event);
     }
   };
 
-  events.zoomend = function() {
+  events.zoomend = function () {
     ctx.store.changeZoom();
   };
 
-  events.data = function(event) {
+  events.data = function (event) {
     if (event.dataType === 'style') {
       const { setup, map, options, store } = ctx;
       const hasLayers = options.styles.some(style => map.getLayer(style.id));
@@ -177,7 +193,7 @@ export default function(ctx) {
     currentMode = setupModeHandler(mode, ctx);
 
     if (!eventOptions.silent) {
-      ctx.map.fire(Constants.events.MODE_CHANGE, { mode: modename});
+      ctx.map.fire(Constants.events.MODE_CHANGE, { mode: modename });
     }
 
     ctx.store.setDirty();
