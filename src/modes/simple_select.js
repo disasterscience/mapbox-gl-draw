@@ -221,6 +221,7 @@ SimpleSelect.onTouchStart = function(state, e) {
 };
 
 SimpleSelect.onDrag = function(state, e) {
+  return;
   if (state.canDragMove) return this.dragMove(state, e);
   if (this.drawConfig.boxSelect && state.canBoxSelect) return this.whileBoxSelect(state, e);
 };
