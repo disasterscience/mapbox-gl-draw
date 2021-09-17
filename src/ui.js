@@ -3,7 +3,7 @@ import * as Constants from './constants';
 
 const classTypes = ['mode', 'feature', 'mouse'];
 
-export default function(ctx) {
+export default function (ctx) {
 
 
   const buttonElements = {};
@@ -22,7 +22,7 @@ export default function(ctx) {
   };
 
   function clearMapClasses() {
-    queueMapClasses({mode:null, feature:null, mouse:null});
+    queueMapClasses({ mode: null, feature: null, mouse: null });
     updateMapClasses();
   }
 
@@ -115,16 +115,6 @@ export default function(ctx) {
       });
     }
 
-    if (controls[Constants.types.POLYGON]) {
-      buttonElements[Constants.types.POLYGON] = createControlButton(Constants.types.POLYGON, {
-        container: controlGroup,
-        className: Constants.classes.CONTROL_BUTTON_POLYGON,
-        title: `Polygon tool ${ctx.options.keybindings ? '(p)' : ''}`,
-        onActivate: () => ctx.events.changeMode(Constants.modes.DRAW_POLYGON),
-        onDeactivate: () => ctx.events.trash()
-      });
-    }
-
     if (controls[Constants.types.POINT]) {
       buttonElements[Constants.types.POINT] = createControlButton(Constants.types.POINT, {
         container: controlGroup,
@@ -144,6 +134,16 @@ export default function(ctx) {
         onActivate: () => {
           ctx.events.changeMode(Constants.modes.DRAW_CIRCLE);
         },
+        onDeactivate: () => ctx.events.trash()
+      });
+    }
+
+    if (controls[Constants.types.POLYGON]) {
+      buttonElements[Constants.types.POLYGON] = createControlButton(Constants.types.POLYGON, {
+        container: controlGroup,
+        className: Constants.classes.CONTROL_BUTTON_POLYGON,
+        title: `Polygon tool ${ctx.options.keybindings ? '(p)' : ''}`,
+        onActivate: () => ctx.events.changeMode(Constants.modes.DRAW_POLYGON),
         onDeactivate: () => ctx.events.trash()
       });
     }
