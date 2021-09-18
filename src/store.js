@@ -13,6 +13,7 @@ export default function Store(ctx) {
   this._emitSelectionChange = false;
   this._mapInitialConfig = {};
   this.ctx = ctx;
+  this.clickEvent = {};
   this.sources = {
     hot: [],
     cold: []

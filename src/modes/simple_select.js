@@ -119,6 +119,7 @@ SimpleSelect.onMouseOut = function(state) {
 
 SimpleSelect.onTap = SimpleSelect.onClick = function(state, e) {
   // Click (with or without shift) on no feature
+  this._ctx.store.clickEvent = e; // @tristan-morris - hack in the event startBoxSelect
   if (CommonSelectors.noTarget(e)) return this.clickAnywhere(state, e); // also tap
   if (CommonSelectors.isOfMetaType(Constants.meta.VERTEX)(e)) return this.clickOnVertex(state, e); //tap
   if (CommonSelectors.isFeature(e)) return this.clickOnFeature(state, e);
