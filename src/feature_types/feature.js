@@ -48,6 +48,7 @@ Feature.prototype.internal = function(mode) {
     meta: Constants.meta.FEATURE,
     'meta:type': this.type,
     active: Constants.activeStates.INACTIVE,
+    ...this.properties, // @tristan-morris - Unpack properties so they're accessible from the mbgl source
     mode
   };
 
