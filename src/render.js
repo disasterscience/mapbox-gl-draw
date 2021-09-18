@@ -61,7 +61,8 @@ export default function render() {
           type: Constants.geojsonTypes.POINT,
           coordinates: coordinate.coordinates
         }
-      }))
+      })),
+      state: store // @tristan-morris - hack out the state
     });
     store._emitSelectionChange = false;
   }
