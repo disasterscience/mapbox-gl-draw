@@ -91,6 +91,14 @@ export default function (ctx) {
       point: event.point
     };
     const target = featuresAt.touch(event, null, ctx)[0];
+
+    // @tristan-morris - fix for handling touch - per https://github.com/mapbox/mapbox-gl-draw/pull/869/files
+    if (!target && currentModeName === 'simple_select') {
+      return;
+    }
+    event.originalEvent.preventDefault();
+    // end
+
     event.featureTarget = target;
     currentMode.touchstart(event);
   };
@@ -112,6 +120,15 @@ export default function (ctx) {
     }
 
     const target = featuresAt.touch(event, null, ctx)[0];
+
+
+    // @tristan-morris - fix for handling touch
+    if (!target && currentModeName === 'simple_select') {
+      return;
+    }
+    event.originalEvent.preventDefault();
+    // end
+
     event.featureTarget = target;
     if (isTap(touchStartInfo, {
       time: new Date().getTime(),
