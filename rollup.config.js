@@ -2,11 +2,11 @@ const {MINIFY} = process.env;
 const minified = MINIFY === 'true';
 const outputFile = minified ? 'dist/mapbox-gl-draw.js' : 'dist/mapbox-gl-draw-unminified.js';
 
-import replace from '@rollup/plugin-replace';
 import buble from '@rollup/plugin-buble';
-import {terser} from 'rollup-plugin-terser';
-import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+import replace from '@rollup/plugin-replace';
+import {terser} from 'rollup-plugin-terser';
 
 export default {
   input: ['index.js'],
